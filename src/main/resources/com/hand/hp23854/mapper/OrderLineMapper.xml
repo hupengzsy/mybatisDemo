@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.hp23854.mapper.OrderLineMapper">
+<!--    //订单编号、客户名称、客户地址、订单备注、订单创建人、订单行号、物料编码、物料名称、单价、数量、行总价-->
+    <select id="selectOrderLinesByCondition" parameterType="OrderLineQueryContition" resultType="OrderLineQueryResult">
+        select
+        oh.order_number orderNumber,
+        u.user_name userName,
+        u.address address,
+        oh.remark remark,
+        u2.user_name createdByName,
+        ol.order_line_number orderLineNumber,
+        ol.item_code itemCode,
+        ol.item_name itemName,
+        ol.unit_price unitPrice,
+        ol.quantity,
+        ol.line_amount lineAmount
+        from order_header oh
+        left join order_line ol on oh.order_header_id = ol.order_header_id
+        left join sys_user u on u.user_id = oh.customer_user_id
+        left join sys_user u2 on u2.user_id=oh.created_by
+        <where>
+
+            <if test="createdBy != null">
+                and oh.created_by=#{createdBy}
+            </if>
+            <if test="userId != null">
+                and u.user_id=#{userId}
+            </if>
+            <if test="orderLineNumber != null">
+                and ol.order_line_number=#{orderLineNumber}
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">
+                and oh.order_number like '%${orderNumber}%'
+            </if>
+            <if test="orderLineNumber != null">
+                and ol.order_line_number=#{orderLineNumber}
+            </if>
+            <if test="itemCode != null and itemCode != ''">
+                and ol.item_code like '%${itemCode}%'
+            </if>
+            <if test="itemName != null and itemName != ''">
+                and ol.item_name like '%${itemName}%'
+            </if>
+
+        </where>
+    </select>
+
+</mapper>
